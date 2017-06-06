@@ -1,2 +1,2 @@
-# gngff2tab
-Converting Genbank and GFF file to pandas table
+# gbgff2tab
+Converting Genbank and GFF file to pandas table.
