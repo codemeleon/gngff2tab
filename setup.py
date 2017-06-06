@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-setup(name="gbgff2tab",
+setup(name="gbgff2tab_run",
       version="0.0.1",
       description="Converts gff and genbank file to table",
       author="anmol M. Kiran",
@@ -12,7 +12,7 @@ setup(name="gbgff2tab",
                         'pandas',
                         'biopython'],
       license="GPLv3",
-      scripts=["bin/gbgff2tab"],
+      scripts=["bin/gbgff2tab_run"],
       packages=["gbgff2tab"],
       zip_safe=False
      )
