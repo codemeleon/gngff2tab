@@ -12,7 +12,7 @@ setup(name="gbgff2tab",
                         'pandas',
                         'biopython'],
       license="GPLv3",
-      script="gbgff2tab",
+      script="gbgff2tab.py",
       packages=["gbgff2tab"],
       zip_safe=False
      )
