@@ -10,7 +10,7 @@ setup(name="gbgff2tab",
       url="https://github.com/codemeleon/gngff2tab.git",
       install_requires=['click',
                         'pandas',
-                        'biopython' ]
+                        'biopython'],
       license="GPLv3",
       script="gbgff2tab",
       packages=["gbgff2tab"],
