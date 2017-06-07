@@ -19,8 +19,11 @@ If the installation fails, please contact your system administrator. If you disc
 gbgff2tab_run --help
 
 ## Module
->>from gbgff2tab import gff
->>table, seq = gff.dataframe('gfffile')
+
+```python
+from gbgff2tab import gff
+table, seq = gff.dataframe('gfffile')
+```
 
 *table*: pandas table
 *saquences*: sequences dict for squences in gff file
