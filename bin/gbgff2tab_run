@@ -26,7 +26,7 @@ def run(infile, infmt, gffout,fastaout, sep):
         click.echo("Output file not given. Exiting ....")
         exit(1)
     table, seq = gff.dataframe(infile)
-    table.to_csv(outfile, index=False, sep=sep)
+    table.to_csv(gffout, index=False, sep=sep)
     if fastaout:
         with open(fastaout, "w") as fout:
             for k in seq:
