@@ -38,16 +38,18 @@ For more information, please refer to <http://unlicense.org/>
 """
 # Add information to remove comments
 
-from collections import defaultdict
 import gzip
-import pandas as pd
 import re
-import click
+from collections import defaultdict
 from os import path
-from Bio import SeqIO
 
-GTF_HEADER = ['seqname', 'source', 'feature', 'start', 'end', 'score',
-              'strand', 'frame']
+import click
+import pandas as pd
+from Bio import Seq, SeqIO
+
+GTF_HEADER = [
+    'seqname', 'source', 'feature', 'start', 'end', 'score', 'strand', 'frame'
+]
 R_SEMICOLON = re.compile(r'\s*;\s*')
 R_COMMA = re.compile(r'\s*,\s*')
 R_KEYVALUE = re.compile(r'(\s+|\s*=\s*)')
@@ -68,6 +70,7 @@ def _get_value(value):
         return None
 
     return value
+
 
 def parse(line):
     """Parse a single GTF line and return a dict.
@@ -94,6 +97,7 @@ def parse(line):
         if value:
             result[key] = _get_value(value)
     return result
+
 
 def lines(filename):
     """Open an optionally gzipped GTF file and generate a dict for each line.
@@ -144,29 +148,48 @@ def dataframe(filename):
             result[key].append(line.get(key, None))
     # print(pd.DataFrame(result))
     return pd.DataFrame(result), sequences
-#
-#
-# @click.command()
-# @click.option("-gtf", help="gtf/gff/gtf.gz/gff.gz input file", type=str,
-#               default=None, show_default=True)
-# @click.option("-csv", help="csv outputfile", type=str, default=None,
-#               show_default=True)
-# @click.option("-sep", help="Column separator", type=str, default="\t",
-#               show_default=True)
-# def run(gtf, csv, sep):
-#     """gtf/gff/gtf.gz/gff.gz to csv."""
-#     if not gtf:
-#         click.echo("Input file not given. Exiting ....")
-#         exit(1)
-#     if not path.isfile(gtf):
-#         click.echo("Given file doesn't exists. Exiting ....")
-#         exit()
-#     if not csv:
-#         click.echo("Ouput csv path not given. Exiting ...")
-#         exit(1)
-#     dtf = dataframe(gtf)
-#     # dtf.to_csv(csv, index=False, sep=sep)
-#
-#
-# if __name__ == '__main__':
-#     run()
+
+
+def toaa(table, seq):
+    table = table[table['feature'] == "CDS"]
+    table["start"] = pd.to_numeric(table["start"])  # list(map())
+    table["end"] = pd.to_numeric(table["end"])
+    for k in seq:
+        seq[k] = Seq.Seq(seq[k])
+
+    aa_dict = {}
+    for i, row in table[["ID", "seqname", "start", "end",
+                         "strand"]].iterrows():
+        seqt = seq[row["seqname"]][row['start'] - 1:row["end"]]
+        if row["strand"] == "-":
+            seqt = seqt.reverse_complement()
+        translates = str(seqt.translate()[:-1])
+        aa_dict[row["ID"]] = translates
+    return aa_dict
+
+    #
+    #
+    # @click.command()
+    # @click.option("-gtf", help="gtf/gff/gtf.gz/gff.gz input file", type=str,
+    #               default=None, show_default=True)
+    # @click.option("-csv", help="csv outputfile", type=str, default=None,
+    #               show_default=True)
+    # @click.option("-sep", help="Column separator", type=str, default="\t",
+    #               show_default=True)
+    # def run(gtf, csv, sep):
+    #     """gtf/gff/gtf.gz/gff.gz to csv."""
+    #     if not gtf:
+    #         click.echo("Input file not given. Exiting ....")
+    #         exit(1)
+    #     if not path.isfile(gtf):
+    #         click.echo("Given file doesn't exists. Exiting ....")
+    #         exit()
+    #     if not csv:
+    #         click.echo("Ouput csv path not given. Exiting ...")
+    #         exit(1)
+    #     dtf = dataframe(gtf)
+    #     # dtf.to_csv(csv, index=False, sep=sep)
+    #
+    #
+    # if __name__ == '__main__':
+    #     run()
